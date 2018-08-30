@@ -19,7 +19,7 @@ class Connect{
         if($last_id){
             return $last_id;
         }
-        return 0;
+        return "";
     }
 
     function select_data($sql,$value){
@@ -28,7 +28,17 @@ class Connect{
         if($st->rowCount()){
             return $st->fetchAll();
         }else{
-            return 0;
+            return "";
+        }
+    }
+
+    function select_data_simple($sql){
+    //    echo $sql;
+        $query = $this->conn->query($sql);
+        if($query->rowCount()){
+            return $query->fetchall(PDO::FETCH_NUM);
+        }else{
+            return "";
         }
     }
 
@@ -38,7 +48,7 @@ class Connect{
         if($st->rowCount()){
             return 1;
         }else{
-            return 0;
+            return "";
         }
     }
 
