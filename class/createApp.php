@@ -98,5 +98,5 @@ class CreateApp{
     }
 }
 
-$create = new CreateApp('poll');
+$create = new CreateApp('questions');
 ?>
