@@ -5,7 +5,7 @@ class Models{
     private $integer = "INT";
     private $char = "CHAR";
     private $varchar = "VARCHAR";
-    private $date = "DATE";
+    private $date = "TIMESTAMP";
     private $datetime = "DATETIME";
     private $password = "VARCHAR";
 
@@ -29,7 +29,7 @@ class Models{
         return $name." ".$this->varchar."(".$length.") ".$null;
     }
  
-    public function dateField($name, $null="DEFAULT CURRENT_DATE"){
+    public function dateField($name, $null="DEFAULT CURRENT_TIMESTAMP"){
         return $name." ".$this->date." ".$null;
     }
 
