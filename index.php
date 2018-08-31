@@ -20,7 +20,21 @@ if(isset($_GET['url'])){
         $ob = new $url[0]();
        // $ob->index();
         if(isset($url[1]) && !empty($url[1])){
-            $ob->$url[1]();
+            $level = count($url);
+            if($level>2){
+                $arg = "";
+               /* $method = new ReflectionMethod($url[0], $url[1]);
+                $arg_count = $method->getParameters();
+
+                for($i=2;$i<count($arg_count)+2;$i++){
+                    $arg .= $url[$i].", ";
+                }
+                $arg = substr($arg,0,strlen($arg)-2);*/
+
+                $ob->$url[1]($url[2]);
+            }else{
+                $ob->$url[1]();
+            }
         }
     }
 }

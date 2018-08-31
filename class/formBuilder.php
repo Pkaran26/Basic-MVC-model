@@ -61,7 +61,7 @@
             }
         }
 
-        function generateForm(){
+        function generateForm($data=null){
             $x = count($this->tableInfo);
             if($x>1){
                 $form = "<div>
@@ -74,7 +74,11 @@
                     if (strlen($str)>0){
                         $form .= $str;
                     }else{
-                        $form .= $this->inputs($this->tableInfo[$i]["COLUMN_NAME"], $this->tableInfo[$i]["DATA_TYPE"]);
+                        if(isset($data[0])){
+                            $form .= $this->inputs($this->tableInfo[$i]["COLUMN_NAME"], $this->tableInfo[$i]["DATA_TYPE"],$data[0][$i]);
+                        }else{
+                            $form .= $this->inputs($this->tableInfo[$i]["COLUMN_NAME"], $this->tableInfo[$i]["DATA_TYPE"]);
+                        }
                     }
                     $form .= "</tr>";
                 }
@@ -87,7 +91,7 @@
             }
         }
 
-        function inputs($fname, $type){
+        function inputs($fname, $type,$data=null){
             $str = "";
             if($fname=="password"){
                 $str = "password";
@@ -95,7 +99,7 @@
                 $str = $this->replaceDatatype($type);
             }
             return $str = "<td>".$fname."</td>
-            <td><input type='".$str."' name='".$fname."' required='required' /></td>";
+            <td><input type='".$str."' name='".$fname."' value='".$data."' required='required' /></td>";
         }
 
         function replaceDatatype($type){

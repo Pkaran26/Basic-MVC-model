@@ -14,12 +14,11 @@ class CreateApp{
             mkdir($this->path, true);
             mkdir($this->path."/controller");
             mkdir($this->path."/model");
-            mkdir($this->path."/view");
+
             $this->generateFiles();
-           // mkdir('path/to/directory', 0777, true);
-           echo $this->appname." app created";
-           header("Refresh:1; url=../");
-           return 0;
+            echo $this->appname." app created";
+            header("Refresh:1; url=../");
+            return 0;
         }else{
             echo "already exist";
             header("Refresh:1; url=../");
@@ -28,7 +27,83 @@ class CreateApp{
     }
 
     private function generateFiles(){
-        $txt='';
+        $txt='<?php
+dirname(__DIR__);
+//$base = str_replace('\\', "/", __DIR__)."/<br/>";
+//echo $_SERVER["HTTP_HOST"]."/<br/>";
+require_once("class/controller.php");
+require_once("class/formBuilder.php");
+
+class Employee extends Controller{
+
+    public function __construct(){
+        parent::__construct();
+    }
+
+    public function index(){
+        echo "this is index";
+    }
+
+    public function form(){
+        $ob = new FormBuilder("employee");
+        $ob->generateForm();  
+        if (isset($_POST["formdata"])){
+            echo $res = $this->submitData("employee");
+            if($res==1){
+               echo "success";
+            }else{
+              echo "try again";
+            }
+        }
+    }
+
+    public function show(){
+        $data = $this->selectData("employee");
+       // print_r(array_keys($data[0]));
+        echo "<table>";
+        for($i=0;$i<count($data);$i++){
+            echo "<tr>
+                <td>".$data[$i][1]."</td>
+                <td>".$data[$i][2]."</td>
+                <td>".$data[$i][3]."</td>
+                <td>".$data[$i][4]."</td>
+                <td><a href=\'update/".$data[$i][0]."\'>Update</a></td>
+                <td><a href=\'delete/".$data[$i][0]."\'>Delete</a></td>
+            </tr>";  
+        }
+    }
+
+    public function delete($key){
+        $res = $this->deleteData("employee", [$key]);
+        if($res==1){
+            echo "success";
+        }else{
+            echo "try again";
+        }
+        header("refresh:1;url=../show");
+    }
+
+    public function update($key){
+        $data = $this->selectData("employee", $key);
+        if(isset($data[0])){
+            $ob = new FormBuilder("employee");
+            $ob->generateForm($data);
+            
+            if (isset($_POST["formdata"])){
+                echo $res = $this->updateData("employee",$key);
+                if($res==1){
+                echo "success";
+                }else{
+                echo "try again";
+                }
+                header("refresh:1;url=../show");
+            }
+        }else{
+            header("location:../show");
+        }
+    }
+}
+?>';
         $this->writeFiles($txt, $this->path."/controller/index.php");
 
         $txt = '<?php
@@ -59,42 +134,6 @@ class CreateApp{
         header("Refresh:1; url=../");
         ?>';
         $this->writeFiles($txt, $this->path."/model/index.php");
-        $txt = '<?php
-        require_once("../class/formBuilder.php");
-        
-        function getForm(){
-            $ob = new FormBuilder("'.$this->appname.'");
-            $ob->generateForm();
-        }
-        ?>';
-        $this->writeFiles($txt, $this->path."/view/index.php");
-        $txt = '<?php
-        require_once("../class/urls.php");
-        require_once("views/views.php");
-        ?>
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <meta http-equiv="X-UA-Compatible" content="ie=edge">
-            <title>'.$this->appname.'</title>
-        </head>
-        <body>
-        <ul>
-        <li>
-        <a href="../">Home</a>
-        </li>
-        <li>
-        <a href="?page='.$this->appname.'">Poll</a>
-        </li>
-        </ul>
-            <?php
-                getForm();
-            ?>
-        </body>
-        </html>';
-        $this->writeFiles($txt, $this->path."/index.php");
     }
 
     private function writeFiles($txt, $path){

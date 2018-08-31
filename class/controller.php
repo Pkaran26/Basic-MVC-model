@@ -22,19 +22,21 @@ class Controller{
               return $this->ob->ProcessQuery($sql, $values);
     }
 
-    public function updateData($tablename, $values, $key, $fields=null){
+    public function updateData($tablename, $key){
+        $values = $this->getFormFields($tablename);
+        $fields = $this->getTableFields($tablename);
         $sql = "update ".$tablename." set ";
             for($i=1;$i<count($fields);$i++){
-                $sql .= $f." = ?, ";
+                $sql .= $fields[$i]." = ?, ";
             }
             $sql = substr($sql,0,strlen($sql)-2)." where ".$fields[0]." = ?";
             array_push($values, $key);
             return $this->ob->ProcessQuery($sql, $values);
     }
 
-    public function deleteData($tablename, $fields, $key){
-        $sql = "delete from ".$tablename." where ".$fields[0]." = ?";
-          return $this->ob->ProcessQuery($sql, $values);
+    public function deleteData($tablename, $key){
+        $sql = "delete from ".$tablename." where id = ?";
+          return $this->ob->ProcessQuery($sql, $key);
     }
 
     public function selectData($tablename, $key=null, $fields=null){
