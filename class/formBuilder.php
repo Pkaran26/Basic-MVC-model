@@ -1,9 +1,8 @@
 <?php
-    require_once('config.php');
-    class FormBuilder{
+    require_once('controller.php');
+    class FormBuilder extends Controller{
         private $tableInfo="";
         private $fields = array();
-        private $ob;
         private $table="";
         private $dt = array(
             'varchar'=>'text',
@@ -13,17 +12,26 @@
             'char' => 'text'
         );
         function __construct($table){
-            $this->ob = new Connect();
+            parent::__construct();
             $this->table = $table;
-            $sql = "SELECT COLUMN_NAME, DATA_TYPE  FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ? and TABLE_SCHEMA = ?";
-            $this->tableInfo = $this->ob->select_data($sql,[$this->table,'formbuilder']);
-            //print_r($this->tableInfo);
+            $this->getFields();
+        }
+
+        function getFields(){
+            $this->tableInfo = parent::getFields($this->table);
+            $x = count($this->tableInfo);
+            for($i=0;$i<$x;$i++){
+                array_push($this->fields, $this->tableInfo[$i]["COLUMN_NAME"]);
+            }
+          //  print_r($this->fields);
+            return $this->fields;
         }
 
         function checkForeignKeyExist(){
             $sql = "select COLUMN_NAME, REFERENCED_COLUMN_NAME, REFERENCED_TABLE_NAME 
             from information_schema.KEY_COLUMN_USAGE 
             where TABLE_NAME = ? and REFERENCED_COLUMN_NAME !=''";
+            //selectData
             return $this->ob->select_data($sql,[$this->table]);
         }
 
@@ -57,7 +65,7 @@
             $x = count($this->tableInfo);
             if($x>1){
                 $form = "<div>
-                <form action='../class/submit.php' method='post'>
+                <form method='post'>
                 <table>";
                 for($i=1;$i<$x;$i++){
                     $form .= "<tr>";
@@ -97,22 +105,6 @@
                 $this->dt['varchar'];
             }
         }
-        function getFields(){
-            $x = count($this->tableInfo);
-            for($i=0;$i<$x;$i++){
-                array_push($this->fields, $this->tableInfo[$i]["COLUMN_NAME"]);
-            }
-            return $this->fields;
-        }
-        function setFormData($data){
-            $sql = "insert into ".$this->table."(";
-            $quest = "";
-            foreach($this->fields as $f){
-                $sql .= $f.", ";
-                $quest .= "?, ";
-            }
-            $sql = substr($sql,0,strlen($sql)-2).") values (".substr($quest,0,strlen($quest)-2).")";
-            return $this->ob->ProcessQuery($sql, $data);
-        }
     }
+  //  $b = new FormBuilder('poll');
 ?>

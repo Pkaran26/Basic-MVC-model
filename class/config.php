@@ -1,18 +1,18 @@
 <?php
 class Connect{
     private $conn;
-
-    function __construct(){
-        $this->conn = new PDO("mysql:host=localhost;dbname=formbuilder","root","");
+    public $db = "formbuilder";
+    public function __construct(){
+        $this->conn = new PDO("mysql:host=localhost;dbname=$this->db","root","");
         $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
-    function ProcessQuery($sql,$value){
+    public function ProcessQuery($sql,$value){
         $st = $this->conn->prepare($sql);
         return $st->execute($value);
     }
 
-    function ProcessQuery2($sql,$value){
+    public function ProcessQuery2($sql,$value){
         $st = $this->conn->prepare($sql);
         $st->execute($value);
         $last_id = $this->conn->lastInsertId();
@@ -22,7 +22,7 @@ class Connect{
         return "";
     }
 
-    function select_data($sql,$value){
+    public function select_data($sql,$value){
         $st = $this->conn->prepare($sql);
         $st->execute($value);
         if($st->rowCount()){
@@ -32,7 +32,7 @@ class Connect{
         }
     }
 
-    function select_data_simple($sql){
+    public function select_data_simple($sql){
     //    echo $sql;
         $query = $this->conn->query($sql);
         if($query->rowCount()){
@@ -42,7 +42,7 @@ class Connect{
         }
     }
 
-    function checkData($sql, $value){
+    public function checkData($sql, $value){
         $st = $this->conn->prepare($sql);
         $st->execute($value);
         if($st->rowCount()){
@@ -52,7 +52,7 @@ class Connect{
         }
     }
 
-    function encrypt_decrypt($action, $string) {
+    public function encrypt_decrypt($action, $string) {
         $output = false;
 
         $encrypt_method = "AES-256-CBC";
