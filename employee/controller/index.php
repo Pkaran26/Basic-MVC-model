@@ -1,7 +1,5 @@
 <?php
 dirname(__DIR__);
-//$base = str_replace('\\', '/', __DIR__)."/<br/>";
-//echo $_SERVER['HTTP_HOST']."/<br/>";
 require_once('class/controller.php');
 require_once("class/formBuilder.php");
 
